@@ -28,8 +28,8 @@ lint:  ## Apply go lint check
 test:  ## Run unit test cases
 	@$(call go_test_args,$(GOARCH)) go test -count=1 ./... -ldflags="-s=false" -gcflags="-l" --cover
 
-.PHONY: build-image
-build-image: build
+.PHONY: release-image
+release-image:
 	docker buildx build --push \
 		-t $(IMAGE_REPOSITORY):$(IMAGE_TAG) \
 		--platform linux/amd64,linux/arm64 \

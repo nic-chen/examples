@@ -44,7 +44,13 @@ jobs:
         run: |
           make e2e-test
 
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: all
+
       - name: Build and Push Image
         working-directory: ./shop/
         run: |
-          make build-image
+          make release-image
