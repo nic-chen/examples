@@ -46,5 +46,7 @@ jobs:
 
       - name: Build and Push Image
         working-directory: ./shop/
+        env:
+          IMAGE_TAG: ${{ steps.branch_env.outputs.version }}
         run: |
           make release-image

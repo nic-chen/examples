@@ -1,6 +1,6 @@
 BINDIR ?= ./bin
 IMAGE_REPOSITORY ?= "johz/shop"
-IMAGE_TAG ?= "dev"
+IMAGE_TAG ?= $(shell echo ${IMAGE_TAG:=dev})
 
 GOOS ?= linux
 GOARCH ?= arm
