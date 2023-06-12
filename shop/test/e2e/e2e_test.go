@@ -2,7 +2,7 @@ package e2e
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os/exec"
 	"testing"
@@ -30,11 +30,11 @@ func RunCommand(command string) (string, error) {
 }
 
 func RunContainer(version string) {
-	RunCommand("docker run --name=shop-container -d -p 8080:8080 -e VERSION=" + version + " shop:test")
+	_, _ = RunCommand("docker run --name=shop-container -d -p 8080:8080 -e VERSION=" + version + " shop:test")
 }
 
 func StopContainer() {
-	RunCommand("docker stop shop-container && docker rm shop-container")
+	_, _ = RunCommand("docker stop shop-container && docker rm shop-container")
 }
 
 func HttpGet(url string, headers map[string]string) ([]byte, int, error) {
@@ -68,7 +68,7 @@ func httpRequest(method, url string, headers map[string]string, reqBody string) 
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, 0, err
 	}
