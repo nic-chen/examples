@@ -30,6 +30,7 @@ test:  ## Run unit test cases
 
 .PHONY: release-image
 release-image:
+	docker buildx create --use desktop-linux
 	docker buildx build --push \
 		-t $(IMAGE_REPOSITORY):$(IMAGE_TAG) \
 		--platform linux/amd64,linux/arm64 \
