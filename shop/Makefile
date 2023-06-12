@@ -30,5 +30,12 @@ test:  ## Run unit test cases
 
 .PHONY: build-image
 build-image: build
-	@docker build -t $(IMAGE_REPOSITORY):$(IMAGE_TAG) .
-	@rm ./bin/shop
+	docker buildx build --push \
+		-t $(IMAGE_REPOSITORY):$(IMAGE_TAG) \
+		--platform linux/amd64,linux/arm64 \
+		.
+
+.PHONY: e2e-test
+e2e-test: ## Run e2e test cases
+	docker build -t shop:test .
+	@cd test/e2e  && ginkgo -r
