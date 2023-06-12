@@ -1,10 +1,12 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
 type Product struct {
@@ -112,9 +114,24 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	r := setupRouter()
-	err := r.Run()
-	if err != nil {
-		panic(err)
-	}
+	go func() {
+		r := setupRouter()
+		err := r.Run()
+		if err != nil {
+			log.Fatalf("failed to start https server: %v\n", err)
+		}
+
+		log.Println("https server started")
+	}()
+
+	WaitForSignal(func() {
+		if nacosCli != nil {
+			svcPort, _ := getSvcPort()
+			nacosCli.DeregisterInstance(vo.DeregisterInstanceParam{
+				Port:        svcPort,
+				ServiceName: getSvcName(),
+				Ephemeral:   true, //it must be true
+			})
+		}
+	})
 }
