@@ -30,11 +30,12 @@ test:  ## Run unit test cases
 
 .PHONY: release-image
 release-image:
-	docker buildx create --use desktop-linux
+	docker buildx create --name multiarch --driver docker-container --use
 	docker buildx build --push \
 		-t $(IMAGE_REPOSITORY):$(IMAGE_TAG) \
 		--platform linux/amd64,linux/arm64 \
 		.
+	docker buildx rm multiarch
 
 .PHONY: e2e-test
 e2e-test: ## Run e2e test cases
