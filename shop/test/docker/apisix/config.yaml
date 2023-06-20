@@ -9,7 +9,7 @@ apisix:
 discovery:
   nacos:
       host:
-        - "http://nacos:8858"
+        - "http://nacos:8848"
       prefix: "/nacos/v1/"
       fetch_interval: 1
       weight: 1
