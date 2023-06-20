@@ -68,7 +68,7 @@ func getSvcName() string {
 		return "shop"
 	}
 
-	return "shop " + version
+	return "shop" + version
 }
 
 func newNacosClient(host string, port uint64) (naming_client.INamingClient, error) {
