@@ -1,0 +1,19 @@
+etcd:
+  host:
+    - "http://etcd:2379"
+
+apisix:
+  allow_admin:
+    - 0.0.0.0/0
+
+discovery:
+  nacos:
+      host:
+        - "http://nacos:8848"
+      prefix: "/nacos/v1/"
+      fetch_interval: 1
+      weight: 1
+      timeout:
+        connect: 2000
+        send: 2000
+        read: 5000

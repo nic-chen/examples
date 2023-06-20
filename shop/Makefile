@@ -40,4 +40,5 @@ release-image:
 .PHONY: e2e-test
 e2e-test: ## Run e2e test cases
 	docker build -t shop:test .
+	docker-compose -f test/docker/docker-compose.yaml up -d
 	@cd test/e2e  && ginkgo -r
