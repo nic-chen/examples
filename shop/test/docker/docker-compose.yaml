@@ -1,0 +1,76 @@
+version: "2"
+services:
+  etcd:
+    image: bitnami/etcd:3.5
+    restart: unless-stopped
+    container_name: etcd
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+
+  apisix:
+    hostname: apisix
+    container_name: apisix
+    image: apache/apisix:2.13.3-debian
+    restart: always
+    volumes:
+      - ./apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+    depends_on:
+      - etcd
+    ports:
+      - '9080:9080/tcp'
+
+  nacos:
+    image: nacos/nacos-server:v2.2.3-slim
+    container_name: nacos
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY_VALUE=security
+      - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890123456789
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+
+  shop1:
+    image: shop:test
+    container_name: shop1
+    restart: always
+    environment:
+      - VERSION=v1
+      - PORT=18080
+      - NACOS_HOST=nacos
+    ports:
+      - "18080:18080"
+    depends_on:
+      - nacos
+
+  shop2:
+    image: shop:test
+    container_name: shop2
+    restart: always
+    environment:
+      - VERSION=v1
+      - PORT=28080
+      - NACOS_HOST=nacos
+    ports:
+      - "28080:28080"
+    depends_on:
+      - nacos
+ 
+  shop3:
+    image: shop:test
+    container_name: shop3
+    restart: always
+    environment:
+      - VERSION=v2
+      - PORT=38080
+      - NACOS_HOST=nacos
+    ports:
+      - "38080:38080"
+    depends_on:
+      - nacos

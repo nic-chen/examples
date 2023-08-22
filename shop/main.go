@@ -1,10 +1,12 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
 type Product struct {
@@ -49,9 +51,14 @@ func setupRouter() *gin.Engine {
 	r.GET("/products", func(c *gin.Context) {
 		version := os.Getenv("VERSION")
 
+		list := make([]Product, 0, len(products))
+		for _, p := range products {
+			list = append(list, p)
+		}
+
 		c.JSON(200, gin.H{
 			"code":    0,
-			"data":    products,
+			"payload": list,
 			"version": version,
 		})
 	})
@@ -77,7 +84,7 @@ func setupRouter() *gin.Engine {
 
 		c.JSON(200, gin.H{
 			"code":    0,
-			"data":    products[id],
+			"payload": products[id],
 			"version": version,
 		})
 	})
@@ -103,7 +110,7 @@ func setupRouter() *gin.Engine {
 
 		c.JSON(200, gin.H{
 			"code":    0,
-			"data":    orders[id],
+			"payload": orders[id],
 			"version": version,
 		})
 	})
@@ -112,9 +119,24 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	r := setupRouter()
-	err := r.Run()
-	if err != nil {
-		panic(err)
-	}
+	go func() {
+		r := setupRouter()
+		err := r.Run()
+		if err != nil {
+			log.Fatalf("failed to start https server: %v\n", err)
+		}
+
+		log.Println("https server started")
+	}()
+
+	WaitForSignal(func() {
+		if nacosCli != nil {
+			svcPort, _ := getSvcPort()
+			nacosCli.DeregisterInstance(vo.DeregisterInstanceParam{
+				Port:        svcPort,
+				ServiceName: getSvcName(),
+				Ephemeral:   true, //it must be true
+			})
+		}
+	})
 }
