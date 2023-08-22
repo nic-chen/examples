@@ -49,9 +49,14 @@ func setupRouter() *gin.Engine {
 	r.GET("/products", func(c *gin.Context) {
 		version := os.Getenv("VERSION")
 
+		list := make([]Product, 0, len(products))
+		for _, p := range products {
+			list = append(list, p)
+		}
+
 		c.JSON(200, gin.H{
 			"code":    0,
-			"data":    products,
+			"payload": list,
 			"version": version,
 		})
 	})
@@ -77,7 +82,7 @@ func setupRouter() *gin.Engine {
 
 		c.JSON(200, gin.H{
 			"code":    0,
-			"data":    products[id],
+			"payload": products[id],
 			"version": version,
 		})
 	})
@@ -103,7 +108,7 @@ func setupRouter() *gin.Engine {
 
 		c.JSON(200, gin.H{
 			"code":    0,
-			"data":    orders[id],
+			"payload": orders[id],
 			"version": version,
 		})
 	})

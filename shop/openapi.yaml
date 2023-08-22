@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  version: 1.0.0
+servers:
+  - url: http://175.27.158.200:81
+paths:
+  /products:
+    get:
+      summary: Get all products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    description: Response code
+                  payload:
+                    type: array
+                    description: Product data
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Product ID
+                        name:
+                          type: string
+                          description: Product name
+                  version:
+                    type: string
+                    description: API version
